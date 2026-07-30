@@ -1,1 +1,11 @@
-"""{{ tool_name }} datalab tool plugin."""
+"""{{ description }}"""
+
+from ._version import __version__
+from .provider import (
+    {{ (tool_id[:-5] if tool_id.endswith('-tool') else tool_id) | replace('-', ' ') | title | replace(' ', '') }}ToolProvider,
+)
+
+__all__ = (
+    "__version__",
+    "{{ (tool_id[:-5] if tool_id.endswith('-tool') else tool_id) | replace('-', ' ') | title | replace(' ', '') }}ToolProvider",
+)

@@ -1,6 +1,8 @@
 _commit: "{{ _copier_conf.vcs_ref }}"
 _src_path: "{{ _copier_conf.src_path }}"
 distribution_name: {{ distribution_name | tojson }}
+repository_name: {{ repository_name | tojson }}
+repository_namespace: {{ repository_namespace | tojson }}
 tool_id: {{ tool_id | tojson }}
 tool_name: {{ tool_name | tojson }}
 tool_ui_kind: {{ tool_ui_kind | tojson }}
@@ -18,3 +20,6 @@ item_table_action_max_items: {{ item_table_action_max_items }}
 description: {{ description | tojson }}
 author_name: {{ author_name | tojson }}
 author_email: {{ author_email | tojson }}
+copyright_holder: {{ copyright_holder | tojson }}
+copyright_year: {{ copyright_year }}
+conduct_contact: {{ conduct_contact | tojson }}

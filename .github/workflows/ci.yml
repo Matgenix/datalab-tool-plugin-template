@@ -1,0 +1,49 @@
+name: Template
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        kind: [standalone, in-app]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.11.x"
+      - name: Generate project
+        run: |
+          uvx copier copy --trust --defaults \
+            --data tool_ui_kind=${{ matrix.kind }} \
+            --data tool_name="Generated ${{ matrix.kind }}" \
+            --data distribution_name="datalab-generated-${{ matrix.kind }}-tool" \
+            --data repository_name="datalab-generated-${{ matrix.kind }}-tool" \
+            --data tool_id="generated-${{ matrix.kind }}" \
+            . generated
+      - name: Lock and test Python project
+        working-directory: generated
+        run: |
+          uv lock
+          uv sync --locked --all-extras --dev
+          uv run pytest -v
+          uv build
+      - uses: actions/setup-node@v6
+        if: matrix.kind == 'in-app'
+        with:
+          node-version: "22"
+      - name: Build in-app frontend
+        if: matrix.kind == 'in-app'
+        working-directory: generated/frontend
+        run: |
+          corepack enable
+          yarn install
+          yarn lint
+          yarn build

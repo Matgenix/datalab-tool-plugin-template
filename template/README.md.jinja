@@ -1,72 +1,22 @@
-# {{ tool_name }}
+<div align="center"><i>{{ repository_name }}</i></div>
+
+<div align="center">
+<a href="https://github.com/{{ repository_namespace }}/{{ repository_name }}/actions/workflows/ci.yml"><img src="https://github.com/{{ repository_namespace }}/{{ repository_name }}/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+<a href="https://github.com/{{ repository_namespace }}/{{ repository_name }}/releases"><img src="https://badgen.net/github/release/{{ repository_namespace }}/{{ repository_name }}?icon=github&color=blue" alt="Release"></a>
+<a href="https://github.com/{{ repository_namespace }}/{{ repository_name }}"><img src="https://badgen.net/github/license/{{ repository_namespace }}/{{ repository_name }}?icon=license&color=purple" alt="License"></a>
+<a href="https://{{ repository_namespace }}.github.io/{{ repository_name }}/"><img src="https://github.com/{{ repository_namespace }}/{{ repository_name }}/actions/workflows/docs.yml/badge.svg" alt="Documentation"></a>
+</div>
+
+{{ repository_name }} is a [datalab](https://datalab-org.io)
+{% if tool_ui_kind == "in-app" %}in-app tool{% else %}standalone tool{% endif %}
+plugin generated with the
+[datalab tool plugin template](https://github.com/Matgenix/datalab-tool-plugin-template).
 
 {{ description }}
 
-This package registers the `{{ tool_id }}` tool through the
-`pydatalab.tools` entry-point group.
+See [INSTALL.md](INSTALL.md) for installation and development instructions.
+Deployment administrators must review this trusted plugin and its dependencies
+before installing or upgrading it.
 
-## Develop and install
-
-{% if tool_ui_kind == "in-app" %}
-Build the frontend first:
-
-```shell
-cd frontend
-yarn install
-yarn build
-cd ..
-```
-
-Commit `frontend/yarn.lock` and
-`src/{{ distribution_name | replace('-', '_') }}/static/frontend/tool.js`.
-The source distribution includes the frontend sources; the wheel includes the
-compiled bundle.
-{% endif %}
-
-Add the plugin to the datalab checkout's root `plugins.toml`:
-
-```toml
-dependencies = [{{ distribution_name | tojson }}]
-
-[tool.uv.sources]
-{{ distribution_name }} = { path = "../{{ distribution_name }}", editable = true }
-```
-
-Then install it and restart the API:
-
-```shell
-cd pydatalab
-uv run invoke dev.install
-```
-
-## How it accesses datalab
-
-{% if tool_ui_kind == "in-app" %}
-The provider serves one *in-app frontend bundle*. datalab authenticates the
-*provider route*, and the component uses `window.datalabToolSdk.api` with the
-current *browser session*. Normal datalab API permissions still decide which
-data the user can access.
-{% if add_item_table_action %}
-
-The **{{ item_table_action_label }}** table action is available in
-`{{ item_table_action_tables | join("`, `") }}` for selections of
-{{ item_table_action_min_items }} to {{ item_table_action_max_items }} items.
-Read its ordered refcodes with `datalabToolSdk.selection.current()` and load the
-items through permission-aware API routes.
-{% endif %}
-{% else %}
-The provider issues a single-use *launch code*. Its protected exchange route
-returns a *tool access token*, which the standalone page keeps only in
-memory and sends to normal datalab API routes as `DATALAB-API-KEY`.
-{% endif %}
-
-## Administrator trust
-
-Tool plugins are trusted Python packages. In-app bundles are also trusted
-JavaScript running inside the signed-in datalab application. An administrator
-must review the source, dependencies, lockfiles, compiled assets, maintainers,
-and release provenance before installation and every upgrade.
-
-See the datalab
-[Tool plugin documentation](https://docs.datalab-org.io/plugins/#writing-a-tool-plugin)
-for the complete contracts and security model.
+Releases are created from semantic version tags on
+[GitHub](https://github.com/{{ repository_namespace }}/{{ repository_name }}/releases).

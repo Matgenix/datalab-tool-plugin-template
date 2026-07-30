@@ -1,40 +1,62 @@
 # datalab tool plugin template
 
-This is the Copier template for datalab tool plugins. It can
-generate either:
+Copier template for independently maintained
+[datalab](https://github.com/Matgenix/datalab) tool plugins.
 
-- a standalone application that uses a short-lived *tool access token*; or
-- a trusted *in-app tool* that renders inside datalab and uses the current
-  *browser session* through the frontend SDK.
+> [!WARNING]
+> The datalab tool API is under active development. Generated projects
+> currently pin the compatible Matgenix datalab commit.
 
-Generate a new plugin repository:
+The template generates either:
+
+- a standalone tool that opens outside the datalab application and uses a
+  temporary tool access token; or
+- an in-app tool that renders below the datalab navigation and uses the
+  browser-session frontend SDK.
+
+Both variants include packaging, documentation, continuous integration,
+pre-commit, tests, an MIT license, and Copier update metadata. In-app projects
+also include the minimal Vue/Vite frontend and may declare a selected-item
+table action.
+
+## Generate a project
+
+Install [Copier](https://copier.readthedocs.io/) and generate a repository:
 
 ```shell
-uvx copier copy https://github.com/Matgenix/datalab-tool-plugin-template \
+uvx copier copy --trust \
+  https://github.com/Matgenix/datalab-tool-plugin-template \
   ../my-datalab-tool
 ```
 
-The generated project includes the provider, Flask blueprint, package entry
-point, and an example of the selected UI contract. In-app projects also include
-a small Vite build that emits one classic JavaScript bundle and externalizes Vue
-to datalab's host runtime. Either UI kind may open in the current tab or a new
-tab.
+Then initialize and publish the generated repository:
 
-For an in-app project, the template optionally declares one
-*table-selection tool action*. The action can appear in the selected-items
-dropdown of Samples, Inventory, Equipment, or items within a collection. When
-this option is disabled, the generated provider and Vue component contain no
-selection-specific code.
+```shell
+cd ../my-datalab-tool
+git init
+git add .
+git commit -m "Initial tool plugin"
+git branch -M main
+git remote add origin git@github.com:YOUR-NAMESPACE/YOUR-REPOSITORY.git
+git push -u origin main
+```
 
-datalab automatically authenticates every route in the provider's declared
-blueprint. Browser-session *authentication* is the default; service integrations
-must declare service *authentication* and validate their machine client. The
-starter UIs access user data through the normal datalab API, where existing
-*item* and collection permission filters apply.
+## Update a generated project
 
-Both variants are trusted extensions. Deployment administrators must review the
-generated Python package and its dependencies. For *in-app tools*, they must also
-review the frontend source, dependency lockfile, and compiled JavaScript before
-installing or upgrading the plugin. For separately hosted *standalone tools*,
-they must additionally trust the remote operator, backend, *tool access token*
-destination, and data retention and deletion policies.
+After the template has a new release:
+
+```shell
+uvx copier update
+```
+
+Review the resulting changes, resolve conflicts, rebuild any in-app frontend
+bundle, and run the generated checks before committing.
+
+See the
+[standalone example](https://github.com/Matgenix/datalab-standalone-tool-plugin-example)
+and
+[in-app example](https://github.com/Matgenix/datalab-in-app-tool-plugin-example).
+
+Tool plugins are trusted extensions. A datalab deployment administrator must
+review their Python code, dependencies, release provenance, and—for in-app
+tools—the frontend source and compiled bundle before installation or upgrade.

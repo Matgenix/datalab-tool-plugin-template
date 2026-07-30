@@ -1,0 +1,26 @@
+name: Frontend
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: yarn
+          cache-dependency-path: frontend/yarn.lock
+      - run: corepack enable
+      - run: yarn install --frozen-lockfile
+        working-directory: frontend
+      - run: yarn lint
+        working-directory: frontend
+      - run: yarn build
+        working-directory: frontend
+      - name: Check the committed bundle
+        run: git diff --exit-code -- ':(glob)src/*/static/frontend/tool.js'

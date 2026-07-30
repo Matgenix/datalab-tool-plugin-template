@@ -1,0 +1,12 @@
+from {{ distribution_name | replace('-', '_') }} import __version__
+from {{ distribution_name | replace('-', '_') }}.provider import (
+    {{ (tool_id[:-5] if tool_id.endswith('-tool') else tool_id) | replace('-', ' ') | title | replace(' ', '') }}ToolProvider,
+)
+
+
+def test_provider_metadata():
+    provider = {{ (tool_id[:-5] if tool_id.endswith('-tool') else tool_id) | replace('-', ' ') | title | replace(' ', '') }}ToolProvider()
+
+    assert provider.id == {{ tool_id | tojson }}
+    assert provider.metadata.version == __version__
+    assert provider.metadata.ui.kind == {% if tool_ui_kind == "in-app" %}"in_app"{% else %}"standalone"{% endif %}
