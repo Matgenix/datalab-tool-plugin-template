@@ -1,11 +1,12 @@
 # datalab tool plugin template
 
 Copier template for independently maintained
-[datalab](https://github.com/Matgenix/datalab) tool plugins.
+[datalab](https://github.com/datalab-org/datalab) tool plugins.
 
 > [!WARNING]
-> The datalab tool API is under active development. Generated projects
-> currently pin the compatible Matgenix datalab commit.
+> The datalab tool API is under active development. Until it is merged
+> upstream, generated projects use the Matgenix `dw/analysis_tools` branch
+> during development.
 
 The template generates either:
 
