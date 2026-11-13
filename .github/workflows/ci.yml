@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
         with:
-          python-version: "3.10"
+          python-version: "3.11"
       - uses: astral-sh/setup-uv@v7
         with:
           version: "0.11.x"
@@ -27,15 +27,8 @@ jobs:
             --data distribution_name="datalab-generated-${{ matrix.kind }}-tool" \
             --data repository_name="datalab-generated-${{ matrix.kind }}-tool" \
             --data tool_id="generated-${{ matrix.kind }}" \
+            --data add_item_table_action=true \
             . generated
-      - name: Lock and test Python project
-        working-directory: generated
-        run: |
-          uv lock
-          uv sync --locked --all-extras --dev
-          uv run pre-commit run --all-files --show-diff-on-failure
-          uv run pytest -v
-          uv build
       - uses: actions/setup-node@v6
         if: matrix.kind == 'in-app'
         with:
@@ -48,3 +41,11 @@ jobs:
           yarn install
           yarn lint
           yarn build
+      - name: Lock and test Python project
+        working-directory: generated
+        run: |
+          uv lock
+          uv sync --locked --all-extras --dev
+          uv run pre-commit run --all-files --show-diff-on-failure
+          uv run pytest -v
+          uv build

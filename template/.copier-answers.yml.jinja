@@ -7,7 +7,6 @@ tool_id: {{ tool_id | tojson }}
 tool_name: {{ tool_name | tojson }}
 tool_ui_kind: {{ tool_ui_kind | tojson }}
 tool_open_mode: {{ tool_open_mode | tojson }}
-{% if tool_ui_kind == "in-app" %}
 add_item_table_action: {{ add_item_table_action | tojson }}
 {% if add_item_table_action %}
 item_table_action_id: {{ item_table_action_id | tojson }}
@@ -15,7 +14,6 @@ item_table_action_label: {{ item_table_action_label | tojson }}
 item_table_action_tables: {{ item_table_action_tables | tojson }}
 item_table_action_min_items: {{ item_table_action_min_items }}
 item_table_action_max_items: {{ item_table_action_max_items }}
-{% endif %}
 {% endif %}
 description: {{ description | tojson }}
 author_name: {{ author_name | tojson }}

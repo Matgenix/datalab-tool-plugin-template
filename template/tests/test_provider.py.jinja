@@ -1,6 +1,9 @@
-from {{ distribution_name | replace('-', '_') }} import __version__
+{% if tool_ui_kind == "in-app" %}from flask import Flask
+
+{% endif %}from {{ distribution_name | replace('-', '_') }} import __version__
 from {{ distribution_name | replace('-', '_') }}.provider import (
-    {{ (tool_id[:-5] if tool_id.endswith('-tool') else tool_id) | replace('-', ' ') | title | replace(' ', '') }}ToolProvider,
+{% if tool_ui_kind == "in-app" %}    TOOL_BLUEPRINT,
+{% endif %}    {{ (tool_id[:-5] if tool_id.endswith('-tool') else tool_id) | replace('-', ' ') | title | replace(' ', '') }}ToolProvider,
 )
 
 
@@ -10,3 +13,20 @@ def test_provider_metadata():
     assert provider.id == {{ tool_id | tojson }}
     assert provider.metadata.version == __version__
     assert provider.metadata.ui.kind == {% if tool_ui_kind == "in-app" %}"in_app"{% else %}"standalone"{% endif %}
+{% if add_item_table_action %}
+    action = provider.metadata.launch_actions[0]
+    assert action.id == {{ item_table_action_id | tojson }}
+    assert action.tables == ({% for table in item_table_action_tables %}{% if not loop.first %}, {% endif %}{{ table | tojson }}{% endfor %},)
+{% endif %}{% if tool_ui_kind == "in-app" %}
+
+def test_frontend_bundle_route_sets_safe_headers():
+    app = Flask(__name__)
+    app.register_blueprint(TOOL_BLUEPRINT, url_prefix="/tool")
+
+    response = app.test_client().get("/tool/frontend/tool.js")
+
+    assert response.status_code == 200
+    assert response.mimetype == "text/javascript"
+    assert response.headers["Cache-Control"] == "no-cache"
+    assert response.headers["X-Content-Type-Options"] == "nosniff"
+{% endif -%}

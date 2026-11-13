@@ -46,7 +46,7 @@ class {{ (tool_id[:-5] if tool_id.endswith('-tool') else tool_id) | replace('-',
             ItemTableSelectionAction(
                 id={{ item_table_action_id | tojson }},
                 label={{ item_table_action_label | tojson }},
-                tables={{ item_table_action_tables | tojson }},
+                tables=({% for table in item_table_action_tables %}{% if not loop.first %}, {% endif %}{{ table | tojson }}{% endfor %},),
                 min_items={{ item_table_action_min_items }},
                 max_items={{ item_table_action_max_items }},
             ),
@@ -68,6 +68,9 @@ class {{ (tool_id[:-5] if tool_id.endswith('-tool') else tool_id) | replace('-',
 from flask import Blueprint, jsonify, request
 from flask_login import current_user
 from pydatalab.tools import (
+{%- if add_item_table_action %}
+    ItemTableSelectionAction,
+{%- endif %}
     StandaloneToolUI,
     ToolContext,
     ToolLaunchGrantIssuer,
@@ -104,7 +107,13 @@ def exchange():
     if result is None:
         return jsonify({"error": "Invalid or expired launch code"}), 400
 
-    response = jsonify({"tool_access_token": result.tool_session.tool_access_token})
+    response_data = {"tool_access_token": result.tool_session.tool_access_token}
+    if result.selection is not None:
+        response_data["selection"] = {
+            "action": result.selection.action_id,
+            "items": list(result.selection.item_refcodes),
+        }
+    response = jsonify(response_data)
     response.headers["Cache-Control"] = "no-store"
     return response, 200
 
@@ -119,6 +128,17 @@ class {{ (tool_id[:-5] if tool_id.endswith('-tool') else tool_id) | replace('-',
         version=__version__,
         icon="laptop-code",
         ui=StandaloneToolUI({% if tool_open_mode != "new_tab" %}open_mode={{ tool_open_mode | tojson }}{% endif %}),
+{%- if add_item_table_action %}
+        launch_actions=(
+            ItemTableSelectionAction(
+                id={{ item_table_action_id | tojson }},
+                label={{ item_table_action_label | tojson }},
+                tables=({% for table in item_table_action_tables %}{% if not loop.first %}, {% endif %}{{ table | tojson }}{% endfor %},),
+                min_items={{ item_table_action_min_items }},
+                max_items={{ item_table_action_max_items }},
+            ),
+        ),
+{%- endif %}
     )
     blueprint = TOOL_BLUEPRINT
 

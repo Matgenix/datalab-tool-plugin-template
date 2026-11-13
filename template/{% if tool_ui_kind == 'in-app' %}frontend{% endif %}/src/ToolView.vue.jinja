@@ -1,10 +1,12 @@
 <template>
   <section class="datalab-tool-{{ tool_id }} container py-4">
-    <h1 class="h2">{{ tool_name | e }}</h1>
-    <p v-text="message"></p>{% if add_item_table_action %}
+    <h1 class="h2">
+      {{ tool_name | e }}
+    </h1>
+    <p v-text="message" />{% if add_item_table_action %}
     <p v-if="selectedItemRefcodes.length">
       This tool was opened with
-      <span v-text="selectedItemRefcodes.length"></span> selected item(s).
+      <span v-text="selectedItemRefcodes.length" /> selected item(s).
     </p>{% endif %}
   </section>
 </template>

@@ -5,8 +5,8 @@ Copier template for independently maintained
 
 > [!WARNING]
 > The datalab tool API is under active development. Until it is merged
-> upstream, generated projects use the Matgenix `dw/analysis_tools` branch
-> during development.
+> upstream, generated projects use the Matgenix `dw/tools_plugins_nojupyter`
+> branch during development.
 
 The template generates either:
 
@@ -16,9 +16,9 @@ The template generates either:
   browser-session frontend SDK.
 
 Both variants include packaging, documentation, continuous integration,
-pre-commit, tests, an MIT license, and Copier update metadata. In-app projects
-also include the minimal Vue/Vite frontend and may declare a selected-item
-table action.
+pre-commit, tests, an MIT license, and Copier update metadata, and may declare
+a selected-item table action. In-app projects also include the minimal
+Vue/Vite frontend.
 
 ## Generate a project
 
