@@ -1,16 +1,52 @@
-# Installation and development
+# Installation
 
-Install [uv](https://docs.astral.sh/uv/) and clone the repository:
+This plugin runs trusted code in the datalab API process{% if tool_ui_kind == "in-app" %} and
+trusted JavaScript in signed-in users' datalab pages{% endif %}. Review the
+selected release, dependencies, and built assets before installing it.
+
+## Install in datalab
+
+Add the plugin to the datalab checkout's root `plugins.toml`, preserving any
+existing dependencies and source entries:
+
+```toml
+dependencies = [{{ distribution_name | tojson }}]
+
+[tool.uv.sources]
+{{ distribution_name }} = { git = "https://github.com/{{ repository_namespace }}/{{ repository_name }}.git", rev = "<reviewed-tag-or-commit>" }
+```
+
+Install the configured plugins:
+
+```shell
+cd pydatalab
+uv run invoke dev.install
+```
+
+Restart a native datalab API, or rebuild and recreate its Docker images. Sign in
+as a normal user and confirm that **{{ tool_name }}** appears under **Tools**{% if add_item_table_action %}
+and that **{{ item_table_action_label }}** appears for a valid selection in the
+configured item tables{% endif %}.
+
+The generic datalab
+[plugin operations guide](https://docs.datalab-org.io/en/latest/plugins/#installing-and-maintaining-plugins)
+is the source for Docker behavior, upgrades, rollback, removal, and tool ordering
+or disabling.
+
+## Development setup
+
+Install [uv](https://docs.astral.sh/uv/), then clone and check the project:
 
 ```shell
 git clone https://github.com/{{ repository_namespace }}/{{ repository_name }}.git
 cd {{ repository_name }}
 uv sync --locked --all-extras --dev
-uv run pre-commit install
+uv run pytest
+uv run pre-commit run --all-files
 ```
 
 {% if tool_ui_kind == "in-app" %}
-Build the in-app frontend:
+After changing the frontend, rebuild the bundle:
 
 ```shell
 cd frontend
@@ -23,24 +59,6 @@ Commit `frontend/yarn.lock` and
 `src/{{ distribution_name | replace('-', '_') }}/static/frontend/tool.js`.
 {% endif %}
 
-## Install in a datalab checkout
-
-Add the plugin to the datalab checkout's root `plugins.toml`:
-
-```toml
-dependencies = [{{ distribution_name | tojson }}]
-
-[tool.uv.sources]
-{{ distribution_name }} = { path = "../{{ repository_name }}", editable = true }
-```
-
-Preserve existing dependencies and source entries when merging this
-configuration. Then install the configured plugins:
-
-```shell
-cd pydatalab
-uv run invoke dev.install
-```
-
-Restart the datalab API after installation so it discovers the
-`pydatalab.tools` entry point.
+For integration testing, replace the Git source above with an editable path to
+this checkout. Rerun `uv run invoke dev.install`, restart datalab, and exercise
+the tool as a normal user.

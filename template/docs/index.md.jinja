@@ -2,31 +2,24 @@
 
 {{ description }}
 
-This package provides a trusted datalab
-{% if tool_ui_kind == "in-app" %}in-app tool{% else %}standalone tool{% endif %}
-through the `pydatalab.tools` entry-point group.
+## Open the tool
 
-See the
-[installation guide](https://github.com/{{ repository_namespace }}/{{ repository_name }}/blob/main/INSTALL.md)
-and the
-[datalab tool-plugin documentation](https://docs.datalab-org.io/plugins/#writing-a-tool-plugin).
-
-## Trust
-
-Tool plugins execute trusted Python code in the datalab API process.
-{% if tool_ui_kind == "in-app" %}
-This plugin also loads trusted JavaScript in the signed-in datalab application.
+Sign in to datalab, click **Tools**, and choose **{{ tool_name }}**. It opens {% if tool_ui_kind == "in-app" %}inside datalab below the normal navigation{% else %}as a standalone application{% endif %}.
+{% if add_item_table_action %}
+To start with items, select {{ item_table_action_min_items }}–{{ item_table_action_max_items }}
+rows in a supported table and choose
+**{{ item_table_action_label }}** from the selected-items menu.
 {% endif %}
-Deployment administrators must review source code, dependencies, compiled
-assets, maintainers, and release provenance before installation or upgrade.
 
-## Availability and route access
+<!-- Replace this comment with the tool's normal user workflow before release. -->
 
-Override `ToolProvider.is_available(context)` when access depends on the
-current user. The result controls catalog visibility, launch permission, and
-all browser-authenticated routes in the provider blueprint. An exception denies
-access, so availability checks should be small and reliable.
+If the tool is unavailable or reports an expired session, return to datalab and
+launch it again. Contact the deployment administrator if it does not appear in
+the complete Tools catalog.
 
-`is_available(context)` is not called for service-authenticated provider
-routes. Providers using `ToolRouteAuth.SERVICE` must authorize clients in
-`authenticate_service_request()` and in their handler logic.
+## Administration and development
+
+Deployment administrators should follow the repository's
+[installation guide](https://github.com/{{ repository_namespace }}/{{ repository_name }}/blob/main/INSTALL.md).
+Developers should start with datalab's
+[tool plugin development guide](https://docs.datalab-org.io/en/latest/plugin-development/tool-plugin/).

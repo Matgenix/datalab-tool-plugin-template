@@ -1,65 +1,57 @@
 # datalab tool plugin template
 
-Copier template for independently maintained
-[datalab](https://github.com/datalab-org/datalab) tool plugins.
+Use this Copier template to create an independently maintained
+[datalab](https://github.com/datalab-org/datalab) tool plugin. Generated
+projects include packaging, tests, documentation, continuous integration,
+pre-commit checks, an MIT license, and Copier update metadata.
 
 > [!WARNING]
-> The datalab tool API is under active development. Until it is merged
-> upstream, generated projects use the Matgenix `dw/tools_plugins_nojupyter`
-> branch during development.
+> The tool API is still being developed on the Matgenix
+> `dw/tools_plugins_nojupyter` branch. Generated development dependencies point
+> to that branch until the feature is merged upstream.
 
-The template generates either:
+## Choose a tool type
 
-- a standalone tool that opens outside the datalab application and uses a
-  temporary tool access token; or
-- an in-app tool that renders below the datalab navigation and uses the
-  browser-session frontend SDK.
+- **In-app** renders below datalab's navigation and uses the browser-session
+  frontend SDK. The template includes a minimal Vue/Vite frontend.
+- **Standalone** opens a separate page or service and uses a temporary tool
+  access token.
 
-Both variants include packaging, documentation, continuous integration,
-pre-commit, tests, an MIT license, and Copier update metadata, and may declare
-a selected-item table action. In-app projects also include the minimal
-Vue/Vite frontend.
+Either type can add a selected-items table action. Read
+[Developing tool plugins](https://docs.datalab-org.io/en/latest/plugin-development/tool-plugin/)
+before choosing; it explains the UI trade-offs, provider contract, permissions,
+testing, packaging, and release workflow.
 
 ## Generate a project
-
-Install [Copier](https://copier.readthedocs.io/) and generate a repository:
 
 ```shell
 uvx copier copy --trust \
   https://github.com/Matgenix/datalab-tool-plugin-template \
   ../my-datalab-tool
-```
-
-Then initialize and publish the generated repository:
-
-```shell
 cd ../my-datalab-tool
-git init
-git add .
-git commit -m "Initial tool plugin"
-git branch -M main
-git remote add origin git@github.com:YOUR-NAMESPACE/YOUR-REPOSITORY.git
-git push -u origin main
 ```
+
+Copier runs `uv lock`. Review the generated `README.md` and `INSTALL.md`, then
+replace the generic description and user instructions with the tool's actual
+workflow and configuration before publishing it.
+
+Two generated repositories show the intended result:
+
+- [in-app Hello World example](https://github.com/Matgenix/datalab-in-app-tool-plugin-example)
+- [standalone Hello World example](https://github.com/Matgenix/datalab-standalone-tool-plugin-example)
 
 ## Update a generated project
 
-After the template has a new release:
+From the generated repository, run:
 
 ```shell
 uvx copier update
 ```
 
-Review the resulting changes, resolve conflicts, rebuild any in-app frontend
-bundle, and run the generated checks before committing.
+Review and resolve the changes, rebuild an in-app frontend bundle if present,
+and run the generated tests and pre-commit checks before committing.
 
-See the
-[standalone example](https://github.com/Matgenix/datalab-standalone-tool-plugin-example)
-and
-[in-app example](https://github.com/Matgenix/datalab-in-app-tool-plugin-example).
-
-Tool plugins are trusted extensions. A datalab deployment administrator must
-review their Python code, dependencies, release provenance, and—for in-app
-tools—the frontend source and compiled bundle before installation or upgrade.
-Standalone tools must use HTTPS in production. HTTP launch URLs are supported
-only for explicit loopback development hosts, not private-LAN hosts.
+Tool plugins are trusted extensions. Deployment administrators must review
+Python code, dependencies, built artifacts, and release provenance before
+installation or upgrade. Standalone services must also follow datalab's
+[deployment boundary](https://docs.datalab-org.io/en/latest/deployment/#plugin-provided-standalone-services).

@@ -7,20 +7,31 @@
 <a href="https://{{ repository_namespace }}.github.io/{{ repository_name }}/"><img src="https://github.com/{{ repository_namespace }}/{{ repository_name }}/actions/workflows/docs.yml/badge.svg" alt="Documentation"></a>
 </div>
 
-{{ repository_name }} is a [datalab](https://datalab-org.io)
-{% if tool_ui_kind == "in-app" %}in-app tool{% else %}standalone tool{% endif %}
-plugin generated with the
-[datalab tool plugin template](https://github.com/Matgenix/datalab-tool-plugin-template).
+# {{ tool_name }}
 
 {{ description }}
 
-See [INSTALL.md](INSTALL.md) for installation and development instructions.
-Deployment administrators must review this trusted plugin and its dependencies
-before installing or upgrading it.
+This is a trusted datalab
+{% if tool_ui_kind == "in-app" %}in-app{% else %}standalone{% endif %} tool plugin
+generated with the
+[datalab tool plugin template](https://github.com/Matgenix/datalab-tool-plugin-template).
+
+## Documentation
+
+- **Users:** read the [{{ tool_name }} user guide](https://{{ repository_namespace }}.github.io/{{ repository_name }}/).
+- **Deployment administrators:** follow [INSTALL.md](INSTALL.md) for the exact
+  package and installation steps.
+- **Developers:** use [INSTALL.md](INSTALL.md#development-setup) for local setup
+  and the datalab
+  [tool plugin development guide](https://docs.datalab-org.io/en/latest/plugin-development/tool-plugin/)
+  for the provider, permissions, testing, and release workflow.
+
+Deployment administrators must review this plugin's source, dependencies,
+built assets, maintainers, and release provenance before installation or
+upgrade.
 {% if tool_ui_kind == "standalone" %}
 Production launch URLs must use HTTPS. HTTP is supported only for explicit
-loopback URLs during local development; private-LAN HTTP launch URLs are
-intentionally rejected by datalab.
+loopback URLs during local development.
 {% endif %}
 
 Releases are created from semantic version tags on
