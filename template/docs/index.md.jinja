@@ -19,3 +19,14 @@ This plugin also loads trusted JavaScript in the signed-in datalab application.
 {% endif %}
 Deployment administrators must review source code, dependencies, compiled
 assets, maintainers, and release provenance before installation or upgrade.
+
+## Availability and route access
+
+Override `ToolProvider.is_available(context)` when access depends on the
+current user. The result controls catalog visibility, launch permission, and
+all browser-authenticated routes in the provider blueprint. An exception denies
+access, so availability checks should be small and reliable.
+
+`is_available(context)` is not called for service-authenticated provider
+routes. Providers using `ToolRouteAuth.SERVICE` must authorize clients in
+`authenticate_service_request()` and in their handler logic.

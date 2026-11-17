@@ -17,6 +17,11 @@ plugin generated with the
 See [INSTALL.md](INSTALL.md) for installation and development instructions.
 Deployment administrators must review this trusted plugin and its dependencies
 before installing or upgrading it.
+{% if tool_ui_kind == "standalone" %}
+Production launch URLs must use HTTPS. HTTP is supported only for explicit
+loopback URLs during local development; private-LAN HTTP launch URLs are
+intentionally rejected by datalab.
+{% endif %}
 
 Releases are created from semantic version tags on
 [GitHub](https://github.com/{{ repository_namespace }}/{{ repository_name }}/releases).

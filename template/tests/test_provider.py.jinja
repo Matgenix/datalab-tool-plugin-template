@@ -1,9 +1,12 @@
-{% if tool_ui_kind == "in-app" %}from flask import Flask
+{% if tool_ui_kind == "standalone" %}from types import SimpleNamespace
 
-{% endif %}from {{ distribution_name | replace('-', '_') }} import __version__
-from {{ distribution_name | replace('-', '_') }}.provider import (
-{% if tool_ui_kind == "in-app" %}    TOOL_BLUEPRINT,
-{% endif %}    {{ (tool_id[:-5] if tool_id.endswith('-tool') else tool_id) | replace('-', ' ') | title | replace(' ', '') }}ToolProvider,
+{% endif %}from flask import Flask
+
+from {{ distribution_name | replace('-', '_') }} import __version__
+{% if tool_ui_kind == "standalone" %}from {{ distribution_name | replace('-', '_') }} import provider as provider_module
+{% endif %}from {{ distribution_name | replace('-', '_') }}.provider import (
+    TOOL_BLUEPRINT,
+    {{ (tool_id[:-5] if tool_id.endswith('-tool') else tool_id) | replace('-', ' ') | title | replace(' ', '') }}ToolProvider,
 )
 
 
@@ -29,4 +32,34 @@ def test_frontend_bundle_route_sets_safe_headers():
     assert response.mimetype == "text/javascript"
     assert response.headers["Cache-Control"] == "no-cache"
     assert response.headers["X-Content-Type-Options"] == "nosniff"
+{% else %}
+
+def test_exchange_binds_launch_code_to_current_user(monkeypatch):
+    app = Flask(__name__)
+    app.register_blueprint(TOOL_BLUEPRINT, url_prefix="/tool")
+    monkeypatch.setattr(
+        provider_module,
+        "current_user",
+        SimpleNamespace(person=SimpleNamespace(immutable_id="user-id")),
+    )
+    exchange = SimpleNamespace(
+        tool_session=SimpleNamespace(tool_access_token="temporary-token"),  # noqa: S106
+        selection=None,
+    )
+
+    def exchange_for_current_user(code, tool_id, client_id, *, expected_user_id):
+        assert (code, tool_id, client_id) == (
+            "launch-code",
+            {{ tool_id | tojson }},
+            {{ tool_id | tojson }},
+        )
+        assert expected_user_id == "user-id"
+        return exchange
+
+    monkeypatch.setattr(provider_module, "exchange_launch_code", exchange_for_current_user)
+
+    response = app.test_client().post("/tool/exchange", json={"code": "launch-code"})
+
+    assert response.status_code == 200
+    assert response.json == {"tool_access_token": "temporary-token"}
 {% endif -%}

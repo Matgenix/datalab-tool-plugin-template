@@ -61,3 +61,5 @@ and
 Tool plugins are trusted extensions. A datalab deployment administrator must
 review their Python code, dependencies, release provenance, and—for in-app
 tools—the frontend source and compiled bundle before installation or upgrade.
+Standalone tools must use HTTPS in production. HTTP launch URLs are supported
+only for explicit loopback development hosts, not private-LAN hosts.
