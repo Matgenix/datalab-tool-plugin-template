@@ -14,8 +14,10 @@ pre-commit checks, an MIT license, and Copier update metadata.
 
 - **In-app** renders below datalab's navigation and uses the browser-session
   frontend SDK. The template includes a minimal Vue/Vite frontend.
-- **Standalone** opens a separate page or service and uses a temporary tool
-  access token.
+- **Standalone** generates a Datalab-side provider adapter plus a separately
+  started external application on its own origin. Flask/Gunicorn are a
+  replaceable protocol reference; the one-shot app keeps no persistent login,
+  session, token, or result.
 
 Either type can add a selected-items table action. Read
 [Developing tool plugins](https://docs.datalab-org.io/en/latest/plugin-development/tool-plugin/)

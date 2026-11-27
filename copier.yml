@@ -55,7 +55,7 @@ tool_ui_kind:
   type: str
   help: Where does the tool's user interface run?
   choices:
-    Standalone application: standalone
+    Separately hosted external application: standalone
     In-app tool (renders below the datalab navigation): in-app
   default: standalone
 
@@ -135,7 +135,7 @@ description:
   help: Short catalog and package description
   default: >-
     {% if tool_ui_kind == "in-app" %}An in-app tool for datalab{% else %}A
-    standalone tool for datalab{% endif %}
+    separately hosted external tool for datalab{% endif %}
 
 author_name:
   type: str

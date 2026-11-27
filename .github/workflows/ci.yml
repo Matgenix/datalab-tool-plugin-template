@@ -48,4 +48,42 @@ jobs:
           uv sync --locked --all-extras --dev
           uv run pre-commit run --all-files --show-diff-on-failure
           uv run pytest -v
+          uv run mkdocs build --strict
           uv build
+      - name: Assert topology-specific render
+        working-directory: generated
+        run: |
+          if [ "${{ matrix.kind }}" = standalone ]; then
+            test -f Dockerfile
+            test -f src/datalab_generated_standalone_tool/service.py
+            test -f src/datalab_generated_standalone_tool/config.py
+            test ! -e src/datalab_generated_standalone_tool/static/index.html
+          else
+            test ! -e Dockerfile
+            test ! -e src/datalab_generated_in_app_tool/service.py
+            test ! -e src/datalab_generated_in_app_tool/config.py
+            test ! -e .env.example
+          fi
+      - name: Verify clean service-only installation
+        if: matrix.kind == 'standalone'
+        working-directory: generated
+        run: |
+          python -m venv /tmp/generated-service
+          wheel=$(find dist -name '*.whl' -print -quit)
+          /tmp/generated-service/bin/pip install "${wheel}[service]"
+          /tmp/generated-service/bin/python -c "import datalab_generated_standalone_tool; from datalab_generated_standalone_tool.service import create_app; assert 'pydatalab' not in __import__('sys').modules"
+      - name: Build and health-check external image
+        if: matrix.kind == 'standalone'
+        working-directory: generated
+        run: |
+          docker build -t datalab-generated-standalone:test .
+          docker run -d --name generated-standalone -p 127.0.0.1:18000:8000 \
+            -e DATALAB_GENERATED_STANDALONE_PUBLIC_URL=http://127.0.0.1:18000 \
+            -e DATALAB_GENERATED_STANDALONE_DATALAB_BROWSER_API_URL=http://127.0.0.1:5001 \
+            -e DATALAB_GENERATED_STANDALONE_DATALAB_API_URL=http://127.0.0.1:5001 \
+            -e DATALAB_GENERATED_STANDALONE_CLIENT_SECRET=cccccccccccccccccccccccccccccccc \
+            -e DATALAB_GENERATED_STANDALONE_COOKIE_SECRET=kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk \
+            datalab-generated-standalone:test
+          trap 'docker rm -f generated-standalone' EXIT
+          for attempt in $(seq 1 20); do curl --fail http://127.0.0.1:18000/healthz && break; sleep 1; done
+          curl --fail http://127.0.0.1:18000/healthz

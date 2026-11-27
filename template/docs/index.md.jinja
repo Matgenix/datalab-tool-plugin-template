@@ -5,6 +5,11 @@
 ## Open the tool
 
 Sign in to datalab, click **Tools**, and choose **{{ tool_name }}**. It opens {% if tool_ui_kind == "in-app" %}inside datalab below the normal navigation{% else %}as a standalone application{% endif %}.
+{% if tool_ui_kind == "standalone" %}
+
+> **TODO:** Replace this page with user documentation for the real external
+> application.
+{% endif %}
 {% if add_item_table_action %}
 To start with items, select {{ item_table_action_min_items }}–{{ item_table_action_max_items }}
 rows in a supported table and choose
@@ -25,11 +30,6 @@ Developers should start with datalab's
 [tool plugin development guide](https://docs.datalab-org.io/en/latest/plugin-development/tool-plugin/).
 {% if tool_ui_kind == "standalone" %}
 
-This scaffold deliberately uses datalab's default replacement policy: each
-relaunch replaces the previous token. Trusted provider code can instead select
-`REUSE_OR_REPLACE` or `INDEPENDENT`. A service that retains a reuse candidate
-and offers explicit renewal must also own an appropriate trusted confirmation
-boundary. See datalab's
-[standalone session contract](https://docs.datalab-org.io/en/latest/plugin-development/standalone-tool-plugin/#access-and-credential-details)
-for the policy, renewal, and security requirements.
-{% endif %}
+> **TODO:** Document the application's session, relaunch, logout, and
+> account-switch behavior if it adds persistent state.
+{% endif -%}

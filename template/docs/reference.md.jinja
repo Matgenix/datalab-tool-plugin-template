@@ -1,3 +1,5 @@
 # API reference
 
-::: {{ distribution_name | replace('-', '_') }}.provider
+{% if tool_ui_kind == "standalone" %}> **TODO:** Document the public interfaces of the real external application.
+{% else %}::: {{ distribution_name | replace('-', '_') }}.provider
+{% endif -%}

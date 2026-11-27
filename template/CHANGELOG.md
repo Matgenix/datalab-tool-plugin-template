@@ -6,6 +6,6 @@ The project follows [Semantic Versioning](https://semver.org/).
 
 ## Unreleased
 
-- Verify that generated browser launch-code exchange routes bind codes to the
-  authenticated user's immutable ID.
+- Add standalone projects with an independently deployed external app and a
+  Datalab provider adapter.
 - Initial tool plugin scaffold.

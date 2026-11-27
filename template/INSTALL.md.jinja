@@ -32,6 +32,32 @@ The generic datalab
 [plugin operations guide](https://docs.datalab-org.io/en/latest/plugins/#installing-and-maintaining-plugins)
 is the source for Docker behavior, upgrades, rollback, removal, and tool ordering
 or disabling.
+{% if tool_ui_kind == "standalone" %}
+
+## Run the independent external service
+
+Installing the provider does not start the external app. Configure the five
+variables listed in `.env.example`, generating two distinct high-entropy
+secrets.
+
+Run the replaceable reference service natively:
+
+```shell
+uv sync --locked --extra service
+uv run gunicorn --bind 127.0.0.1:8000 '{{ distribution_name | replace('-', '_') }}.service:create_app()'
+```
+
+Or build the independent image:
+
+```shell
+docker build -t {{ repository_name }}:<reviewed-version> .
+docker run --rm --env-file /path/to/tool.env -p 127.0.0.1:8000:8000 {{ repository_name }}:<reviewed-version>
+```
+
+> **TODO:** Replace these development commands with production deployment,
+> proxy, TLS, secret-management, logging, health-check, upgrade, and rollback
+> instructions for the real application.
+{% endif %}
 
 ## Development setup
 
@@ -44,6 +70,12 @@ uv sync --locked --all-extras --dev
 uv run pytest
 uv run pre-commit run --all-files
 ```
+{% if tool_ui_kind == "standalone" %}
+
+For local service testing, export loopback URLs and distinct secrets, then run
+`uv run flask --app '{{ distribution_name | replace('-', '_') }}.service:create_app()' run --port 8000`.
+The provider adapter still runs in the separately started Datalab API.
+{% endif %}
 
 {% if tool_ui_kind == "in-app" %}
 After changing the frontend, rebuild the bundle:

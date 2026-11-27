@@ -21,6 +21,14 @@ classifiers = [
     "Topic :: Scientific/Engineering",
 ]
 dependencies = []
+{% if tool_ui_kind == "standalone" %}
+[project.optional-dependencies]
+service = [
+    "flask>=3.1,<4",
+    "gunicorn>=23,<24",
+    "httpx>=0.28,<1",
+]
+{% endif %}
 
 [project.entry-points."pydatalab.tools"]
 {{ tool_id | tojson }} = "{{ distribution_name | replace('-', '_') }}.provider:{{ (tool_id[:-5] if tool_id.endswith('-tool') else tool_id) | replace('-', ' ') | title | replace(' ', '') }}ToolProvider"
@@ -35,7 +43,7 @@ Changelog = "https://github.com/{{ repository_namespace }}/{{ repository_name }}
 {% if tool_ui_kind == "in-app" -%}
 {{ distribution_name | replace('-', '_') | tojson }} = ["py.typed", "static/frontend/*.js"]
 {% else -%}
-{{ distribution_name | replace('-', '_') | tojson }} = ["py.typed", "static/*"]
+{{ distribution_name | replace('-', '_') | tojson }} = ["py.typed", "templates/*.html"]
 {% endif %}
 
 [tool.setuptools.packages.find]

@@ -15,6 +15,15 @@ This is a trusted datalab
 {% if tool_ui_kind == "in-app" %}in-app{% else %}standalone{% endif %} tool plugin
 generated with the
 [datalab tool plugin template](https://github.com/Matgenix/datalab-tool-plugin-template).
+{% if tool_ui_kind == "standalone" %}
+
+This repository produces two separately started runtimes: a provider adapter
+installed in the Datalab API and an external web process on its own origin.
+
+> **TODO:** Replace this generated text with a short description of the real
+> application, its user workflow, and its architecture. Flask/Gunicorn are only
+> a replaceable starting point.
+{% endif %}
 
 ## Documentation
 
@@ -30,12 +39,8 @@ Deployment administrators must review this plugin's source, dependencies,
 built assets, maintainers, and release provenance before installation or
 upgrade.
 {% if tool_ui_kind == "standalone" %}
-Production launch URLs must use HTTPS. Explicit loopback HTTP is available for
-local development. A temporary trusted testing deployment can set
-`PYDATALAB_TOOLS__ALLOW_INSECURE_HTTP=true` to accept non-loopback HTTP from
-every installed standalone provider. This does not weaken authentication,
-authorization, or token exchange, but HTTP can expose launch codes, tokens, and
-user data and must not be used in production.
+See [INSTALL.md](INSTALL.md) for the generated development setup. Replace it
+with the real application's deployment documentation before release.
 {% endif %}
 
 Releases are created from semantic version tags on
